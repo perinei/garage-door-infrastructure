@@ -11,7 +11,7 @@ Metadata:
       Parameters:
       - pProjectName
       - pEnvironment
-      - pOauthToken
+      - pAccessToken
       - pRepoUrl
     - Label:
         default: IoT
@@ -22,7 +22,7 @@ Metadata:
         default: Name of your project
       pEnvironment:
         default: Repository Branch
-      pOauthToken:
+      pAccessToken:
         default: Authentication Token
       pRepoUrl:
         default: Repository URL
@@ -36,10 +36,10 @@ Parameters:
   pProjectName:
     Type: String
     Description: Project Name
-  pOauthToken:
+  pAccessToken:
     Type: String
     NoEcho: true
-    Description: Bitbucket Repository Access Token
+    Description: Github Token
   pRepoUrl:
     Type: String
     Description: Bitbucket Repository URL
@@ -116,8 +116,8 @@ Resources:
           Ref: pIoTendpoint
       Repository:
         Ref: pRepoUrl
-      OauthToken:
-        Ref: pOauthToken
+      AccessToken:
+        Ref: pAccessToken
       Tags:
       - Key: ProjectName
         Value:
