@@ -247,9 +247,9 @@ Resources:
                 Ref: rIdentityPool
             ForAnyValue:StringLike:
               cognito-identity.amazonaws.com:amr: authenticated
-      ManagedPolicyArns:
-      - arn:aws:iam::aws:policy/AWSIoTDataAccess
-      - arn:aws:iam::aws:policy/AWSIoTConfigAccess
+      # ManagedPolicyArns:
+      # - arn:aws:iam::aws:policy/AWSIoTDataAccess
+      # - arn:aws:iam::aws:policy/AWSIoTConfigAccess
       Policies:
       - PolicyName:
           Fn::Sub: ${pProjectName}-${pEnvironment}-Auth
@@ -263,14 +263,53 @@ Resources:
             - cognito-sync:*
             - cognito-identity:*
             Resource: '*'
-          - Sid: IoT
+
+            ######### IOT POLICY FOR AUTHENTICATED USER ############
+
+          - Sid: IoTSubscribe
             Effect: Allow
             Action:
             - iot:Subscribe
+            Resource:
+            - Fn::Sub: arn:aws:iot:${AWS::Region}:${AWS::AccountId}:topicfilter/$aws/things/garage_pi/shadow/*
+
+          - Sid: IoTReceiveMessage
+            Effect: Allow
+            Action:
             - iot:Receive
+            Resource:
+            - arn:aws:iot:${AWS::Region}:${AWS::AccountId}:topic/$aws/things/garage_pi/shadow/update/documents
+            - arn:aws:iot:${AWS::Region}:${AWS::AccountId}:topic/$aws/things/garage_pi/shadow/get/accepted
+
+          - Sid: IoTPublish
+            Effect: Allow
+            Action:
             - iot:Publish
-            - iot:*
-            Resource: '*'
+            Resource:
+            - arn:aws:iot:${AWS::Region}:${AWS::AccountId}:topic/$aws/things/garage_pi/shadow/get
+            - arn:aws:iot:${AWS::Region}:${AWS::AccountId}:topic/garage/button
+
+          - Sid: IoTConnecttoMQTTBroker
+            Effect: Allow
+            Action:
+            - iot:Connect
+            Resource:
+            - "*"            
+
+          - Sid: IoTGetThingShadow
+            Effect: Allow
+            Action:
+            - iot:GetThingShadow
+            Resource:
+            - arn:aws:iot:${AWS::Region}:${AWS::AccountId}:thing/garage_pi  
+
+          - Sid: IoTAttachPolicy
+            Effect: Allow
+            Action:
+            - iot:AttachPolicy
+            Resource:
+            - "*"
+
   UnAuthUserRole:
     Type: AWS::IAM::Role
     Properties:
